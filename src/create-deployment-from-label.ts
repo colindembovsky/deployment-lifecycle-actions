@@ -18,7 +18,7 @@ export class Runner {
     }
 
     parseLabel(): ILabelInfo {
-        core.startGroup("Create comment");
+        core.startGroup("Extract environment from label");
 
         const label = `${this.context.payload.label.name.toLowerCase()}`;
         core.info(`Detected label: ${label}`);

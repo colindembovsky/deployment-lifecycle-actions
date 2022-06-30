@@ -9,6 +9,7 @@ jobs:
     if: github.event.deployment_status.state == 'failure'
     runs-on: ubuntu-20.04
 
+    steps:
     - name: Checkout Sources
       uses: actions/checkout@v3
 

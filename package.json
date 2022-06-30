@@ -13,7 +13,8 @@
     "url": "https://github.com/colindembovsky/deployment-lifecylcle-actions/issues"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc --build",
+    "test": "ava src/**.test.ts --serial --verbose"
   },
   "ava": {
     "typescript": {
@@ -28,5 +29,7 @@
     "ava": "^4.3.0",
     "typescript": "^4.7.4"
   },
-  "dependencies": {}
+  "dependencies": {
+    "@actions/core": "^1.9.0"
+  }
 }

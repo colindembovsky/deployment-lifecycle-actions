@@ -1,6 +1,7 @@
 import * as core from "@actions/core";
-import {context, getOctokit} from '@actions/github';
-import {GitHub} from '@actions/github/lib/utils';
+import { context, getOctokit } from '@actions/github';
+import { Context } from "@actions/github/lib/context";
+import { GitHub } from '@actions/github/lib/utils';
 
 interface ILabelInfo {
     label: string,
@@ -8,10 +9,10 @@ interface ILabelInfo {
 }
 
 export class Runner {
-    constructor(private github: InstanceType<typeof GitHub>) { }
+    constructor(private github: InstanceType<typeof GitHub>, private context: Context) { }
 
     validate() {
-        if (!context.payload.pull_request || !context.payload.label) {
+        if (!this.context.payload.pull_request || !this.context.payload.label) {
             throw new Error("This action must be run from a PR 'labeled' event");
         }
     }
@@ -19,11 +20,11 @@ export class Runner {
     parseLabel(): ILabelInfo {
         core.startGroup("Create comment");
 
-        const label = `${context.payload.label.name.toLowerCase()}`;
-        console.log(`Detected label: ${label}`);
+        const label = `${this.context.payload.label.name.toLowerCase()}`;
+        core.info(`Detected label: ${label}`);
 
-        const regex = core.getInput("environment-regex");
-        console.log(`Using regex ${regex} to extract environment`);
+        const regex = core.getInput("environment-regex", { required: true});
+        core.info(`Using regex ${regex} to extract environment`);
 
         const matcher = RegExp(regex);
         if (!matcher.test(label)) {
@@ -35,7 +36,7 @@ export class Runner {
         if (matches) {
             env = matches[1];
         }
-        console.log(`Environment is ${env}`);
+        core.info(`Environment is ${env}`);
         core.setOutput("environment", env);
         core.endGroup();
 
@@ -50,52 +51,53 @@ export class Runner {
         
         const createComment = core.getBooleanInput("create-comment");
         if (createComment) {
-            const commentBody = `👋 Request from @${context.actor} for deployment received using _${labelInfo.label}_ :rocket:`;
+            const commentBody = `👋 Request from @${this.context.actor} for deployment received using _${labelInfo.label}_ :rocket:`;
             await this.github.rest.issues.createComment({
-                ...context.repo,
-                issue_number: context.issue.number,
+                ...this.context.repo,
+                issue_number: this.context.issue.number,
                 body: commentBody,
             });
-            console.log("Created deployment comment!")
+            core.info("Created deployment comment!")
         } else {
-            console.log("Create comment skipped!")
+            core.warning("Create comment skipped!")
         }
             
         core.endGroup();
-        }
+    }
 
-        async invokeDeploymentWorkflow(labelInfo: ILabelInfo) {
+    async invokeDeploymentWorkflow(labelInfo: ILabelInfo) {
         core.startGroup("Invoke deployment workflow");
         
-        const workflowName = core.getInput("deployment-workflow-name");
-        console.log(`Workflow name: ${workflowName}`);
+        const workflowName = core.getInput("deployment-workflow-name", { required: true});
+        core.info(`Workflow name: ${workflowName}`);
 
         const additionalInputs = core.getInput("additional-inputs-json");
         let inputs = {
             environment: labelInfo.env
         };
         if (additionalInputs) {
-            console.log(`Additional inputs input: ${additionalInputs}`);
+            core.info(`Additional inputs input: ${additionalInputs}`);
             try {
-            const addInputsObj = JSON.parse(additionalInputs);
-            inputs = {
-                environment: labelInfo.env,
-                ...addInputsObj
-            };
+                const addInputsObj = JSON.parse(additionalInputs);
+                inputs = {
+                    environment: labelInfo.env,
+                    ...addInputsObj
+                };
             } catch (err) {
-                console.error("Could not parse additional inputs");
-                throw err;
+                console.error(err);
+                throw new Error("Could not parse additional inputs (invalid JSON)");
             }
         }
-        console.log("Final inputs:");
-        console.log(JSON.stringify(inputs));
+        core.info("Final inputs:");
+        core.info(JSON.stringify(inputs));
+        core.info('');
 
-        console.log("Invoking workflow...");
+        core.info("Invoking workflow...");
         await this.github.rest.actions.createWorkflowDispatch({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
+            owner: this.context.repo.owner,
+            repo: this.context.repo.repo,
             workflow_id: workflowName,
-            ref: `${context.payload.pull_request!.number}`,
+            ref: `${this.context.payload.pull_request!.number}`,
             inputs: inputs
         });
 
@@ -103,11 +105,11 @@ export class Runner {
     }
 
     async removeLabel() {
-        console.log("Removing label...")
+        core.info("Removing label...")
         await this.github.rest.issues.removeLabel({
-            ...context.repo,
-            issue_number: context.issue.number,
-            name: context.payload.label.name
+            ...this.context.repo,
+            issue_number: this.context.issue.number,
+            name: this.context.payload.label.name
         });
     }
 
@@ -123,7 +125,7 @@ export class Runner {
 export async function run() {
     const token = core.getInput('token');
     const github = getOctokit(token);
-    await new Runner(github).run();
+    await new Runner(github, context).run();
 }
 
 async function runWrapper() {

@@ -1,9 +1,6 @@
 name: "Deployment Lifecycle: Extract deployment info"
 description: "Extract deployment info"
 author: "Colin Dembovsky"
-inputs:
-  token:
-    default: ${{ github.token }}
 outputs:
   deployment_ref:
     description: GitHub ref linked to the deployment

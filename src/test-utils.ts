@@ -1,8 +1,9 @@
 import { TestFn } from "ava";
 import * as sinon from "sinon";
 import * as github from '@actions/github';
+import { GitHub } from '@actions/github/lib/utils';
+import { Context } from '@actions/github/lib/context';
 import * as core from '@actions/core';
-import {GitHub} from '@actions/github/lib/utils';
 
 type TestContext = {
     stdoutWrite: any;
@@ -84,8 +85,32 @@ export function stubGH() {
     return github.getOctokit("token");
 }
 
-export function stubCreateIssue(gh: InstanceType<typeof GitHub>, fail: boolean) {
+export function stubCreateIssue(gh: InstanceType<typeof GitHub>, fail: boolean = false) {
     const spy = sinon.stub(gh.rest.issues, "createComment");
+    
+    if (fail) {
+        spy.throws(new Error("some error message"));
+    } else {
+        spy.resolves();
+    }
+
+    return spy;
+}
+
+export function stubCreateWorkflowDispatch(gh: InstanceType<typeof GitHub>, fail: boolean = false) {
+    const spy = sinon.stub(gh.rest.actions, "createWorkflowDispatch");
+    
+    if (fail) {
+        spy.throws(new Error("some error message"));
+    } else {
+        spy.resolves();
+    }
+
+    return spy;
+}
+
+export function stubRemoveLabel(gh: InstanceType<typeof GitHub>, fail: boolean = false) {
+    const spy = sinon.stub(gh.rest.issues, "removeLabel");
     
     if (fail) {
         spy.throws(new Error("some error message"));
@@ -99,20 +124,25 @@ export function stubCreateIssue(gh: InstanceType<typeof GitHub>, fail: boolean) 
 interface IParam {
     name: string,
     value: string
-    isBool: boolean
 }
 
-export function stubCoreParams(values: IParam[]) {
-    const spy = sinon.stub(core, "getInput");
-    values.forEach(v => {
-        if (v.isBool) {
-            spy.withArgs(v.name).resolves(v.value.toLocaleLowerCase() === "true");
-        } else {
-            spy.withArgs(v.name).resolves(v.value);
-        }
-    });
+export function setCoreParams(params: IParam[] = []) {
+    process.env["INPUT_ENVIRONMENT-REGEX"] = "deploy to (\\w+)";
+    process.env["INPUT_CREATE-COMMENT"] = "true";
+    
+    params.forEach(p => process.env[`INPUT_${p.name.toLocaleUpperCase()}`] = p.value);
 }
 
-export function stubContext() {
-    sinon.stub(github.context, "payload").value({ pull_request: "foo", label: "deploy to foo" });
+export function stubCoreOutput() {
+    return sinon.spy(core, "setOutput");
+}
+
+export function stubContext(payload: any = null, actor: string = "colin", eventName: string = "pull_request") {
+    const ctx = new Context();
+    if (payload) {
+        sinon.stub(ctx, "payload").value(payload);
+    }
+    sinon.stub(ctx, "actor").value(actor);
+    sinon.stub(ctx, "eventName").value(eventName);
+    return ctx;
 }

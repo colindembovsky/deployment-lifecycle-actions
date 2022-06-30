@@ -14,7 +14,7 @@
   },
   "scripts": {
     "build": "tsc --build",
-    "test": "yarn run build && ISTEST=1 ava src/**.test.ts --serial --verbose"
+    "test": "yarn run build && ava src/**.test.ts --serial --verbose"
   },
   "ava": {
     "typescript": {
@@ -22,6 +22,9 @@
         "src/": "lib/"
       },
       "compile": false
+    },
+    "environmentVariables": {
+      "ISTEST": "true"
     }
   },
   "devDependencies": {

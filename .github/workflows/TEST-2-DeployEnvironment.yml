@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-20.04
 
     environment:
-      name: ${{ github.inputs.environment_name }}
+      name: ${{ github.inputs.environment }}
       url: ${{ github.inputs.url }}
 
     steps:

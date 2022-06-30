@@ -14,7 +14,8 @@
   },
   "scripts": {
     "build": "tsc --build",
-    "test": "yarn run build && ava src/**.test.ts --serial --verbose"
+    "test": "yarn run build && ava src/**.test.ts --serial --verbose",
+    "cover": "yarn run build && c8 ava src/**.test.ts --serial --verbose"
   },
   "ava": {
     "typescript": {
@@ -32,6 +33,7 @@
     "@octokit/types": "^6.38.1",
     "@types/node": "^18.0.0",
     "ava": "^4.3.0",
+    "c8": "^7.11.3",
     "sinon": "^14.0.0",
     "typescript": "^4.7.4"
   },

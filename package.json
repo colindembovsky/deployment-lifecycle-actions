@@ -1,0 +1,32 @@
+{
+  "name": "deployment-lifecylcle-actions",
+  "version": "0.0.1",
+  "description": "Actions for managing deployments using PRs in GitHub",
+  "author": "Colin Dembovsky",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/colindembovsky/deployment-lifecylcle-actions.git"
+  },
+  "homepage": "https://github.com/colindembovsky/deployment-lifecylcle-actions#readme",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/colindembovsky/deployment-lifecylcle-actions/issues"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "ava": {
+    "typescript": {
+      "rewritePaths": {
+        "src/": "lib/"
+      },
+      "compile": false
+    }
+  },
+  "devDependencies": {
+    "@ava/typescript": "^3.0.1",
+    "ava": "^4.3.0",
+    "typescript": "^4.7.4"
+  },
+  "dependencies": {}
+}

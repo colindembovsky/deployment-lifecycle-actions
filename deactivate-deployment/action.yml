@@ -1,0 +1,9 @@
+name: "Deployment Lifecycle: Deactivate deployments"
+description: "Deactivate deployments linked to the PR"
+author: "Colin Dembovsky"
+inputs:
+  token:
+    default: ${{ github.token }}
+runs:
+  using: "node16"
+  main: "../lib/deactivate-deployments.js"

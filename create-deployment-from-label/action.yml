@@ -1,0 +1,29 @@
+name: "Deployment Lifecycle: Create Deployment from Label"
+description: "Create a deployment from a 'deploy to' label"
+author: "Colin Dembovsky"
+inputs:
+  environment-regex:
+    description: The regex to extract the deployment name from the label
+    required: false
+    default: 'deploy to (\w+)'
+  create-comment:
+    description: Set to true to create a comment on the PR
+    required: false
+    default: "true"
+  comment-body:
+    description: Body of the comment
+    required: false
+    default: ""
+  workflow-name:
+    description: Name of the workflow to invoke to run the deployment logic
+    required: true
+  token:
+    default: ${{ github.token }}
+outputs:
+  environment:
+    description: Name of the environment
+  deployment-id:
+    description: The ID of the deployment
+runs:
+  using: "node16"
+  main: "../lib/create-deployment-from-label.js"

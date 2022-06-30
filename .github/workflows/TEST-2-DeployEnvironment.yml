@@ -17,8 +17,8 @@ jobs:
     runs-on: ubuntu-20.04
 
     environment:
-      name: ${{ github.inputs.environment }}
-      url: ${{ github.inputs.url }}
+      name: ${{ github.event.inputs.environment }}
+      url: ${{ github.event.inputs.url }}
 
     steps:
       - name: Deploy steps!

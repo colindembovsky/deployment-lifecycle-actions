@@ -1,0 +1,22 @@
+name: Build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Install packages
+      run: yarn install
+
+    - name: Build and test with coverage
+      run: yarn run cover
+        

@@ -12,19 +12,15 @@ export class Runner {
     constructor(private github: InstanceType<typeof GitHub>, private context: Context) { }
   
     async run() {
-        this.validate();
-
+        if (!this.context.payload.pull_request) {
+            throw new Error("This action must be run from a PR event");
+        }
+        
         const ref = this.context.payload!.pull_request!.head!.ref;
         // This will transition the environments to failure to trigger clean up and then inactivate them
         // Deployment status 'inactive' does not trigger Github Actions
         // see https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#deployment_status
         await this.deactivateIntegrationDeployments(ref);
-    }
-
-    validate() {
-        if (!this.context.payload.pull_request) {
-            throw new Error("This action must be run from a PR event");
-        }
     }
 
     async deactivateIntegrationDeployments(ref: string) {

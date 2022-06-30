@@ -1,0 +1,28 @@
+name: TEST 1 - Label deployment trigger
+
+on:
+  pull_request:
+    types:
+      - labeled
+
+jobs:
+  deployment:
+    name: Create deployment
+    runs-on: ubuntu-20.04
+    
+    steps:
+    - name: Checkout Sources
+      uses: actions/checkout@v3
+
+    - name: Create deployment from label
+      id: create-deploy
+      uses: ./create-deployment-from-label
+      with:
+        deployment-workflow-name: TEST-2-DeployEnvironment.yml
+        additional-inputs-json: '{ "url": "https://another-test-url" }'
+        token: ${{ secrets.DEPLOY_TOKEN }}
+    
+    - name: Dump env name
+      run: echo $ENV
+      env:
+         ENV: ${{ steps.create-deploy.outputs.environment }}

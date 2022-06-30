@@ -1,0 +1,25 @@
+name: TEST 4 - Destroy Environment
+
+on:
+  deployment_status
+
+jobs:
+  destroy:
+    name: Destroy a deployment environment
+    if: github.event.deployment_status.state == 'failure'
+    runs-on: ubuntu-20.04
+
+    - name: Checkout Sources
+      uses: actions/checkout@v3
+
+    - name: Extract Deployment Details and Report Deployment in Progress
+      id: deployment_data
+      uses: ./extract-deployment-info
+        
+    - name: Destroy environment
+      run: |
+        echo Environment name is $ENV_NAME
+        echo Ref is $REF
+      env:
+        REF: ${{ steps.deployment_data.outputs.deployment_ref }}
+        ENV_NAME: ${{ steps.deployment_data.outputs.environment }}

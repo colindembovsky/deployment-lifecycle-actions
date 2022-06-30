@@ -1,0 +1,25 @@
+name: TEST 2 - Deploy Environment
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment_name:
+        description: The name of the environment to be deployed
+        required: true
+      url:
+        description: The URL of the environment
+        required: false
+        default: https://test
+
+jobs:
+  deploy:
+    name: Deploy to Environment
+    runs-on: ubuntu-20.04
+
+    environment:
+      name: ${{ github.inputs.environment_name }}
+      url: ${{ github.inputs.url }}
+
+    steps:
+      - name: Deploy steps!
+        run: echo "Deploying the app!"

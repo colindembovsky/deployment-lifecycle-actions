@@ -3,7 +3,7 @@ name: TEST 2 - Deploy Environment
 on:
   workflow_dispatch:
     inputs:
-      environment_name:
+      environment:
         description: The name of the environment to be deployed
         required: true
       url:

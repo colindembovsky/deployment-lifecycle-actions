@@ -7,12 +7,8 @@ interface ILabelInfo {
     env: string
 }
 
-class Runner {
-    private github: InstanceType<typeof GitHub>;
-
-    constructor(token: string) {
-        this.github = getOctokit(token);
-    }
+export class Runner {
+    constructor(private github: InstanceType<typeof GitHub>) { }
 
     validate() {
         if (!context.payload.pull_request || !context.payload.label) {
@@ -64,11 +60,11 @@ class Runner {
         } else {
             console.log("Create comment skipped!")
         }
-        
+            
         core.endGroup();
-    }
-    
-    async invokeDeploymentWorkflow(labelInfo: ILabelInfo) {
+        }
+
+        async invokeDeploymentWorkflow(labelInfo: ILabelInfo) {
         core.startGroup("Invoke deployment workflow");
         
         const workflowName = core.getInput("deployment-workflow-name");
@@ -81,11 +77,11 @@ class Runner {
         if (additionalInputs) {
             console.log(`Additional inputs input: ${additionalInputs}`);
             try {
-                const addInputsObj = JSON.parse(additionalInputs);
-                inputs = {
-                    environment: labelInfo.env,
-                    ...addInputsObj
-                };
+            const addInputsObj = JSON.parse(additionalInputs);
+            inputs = {
+                environment: labelInfo.env,
+                ...addInputsObj
+            };
             } catch (err) {
                 console.error("Could not parse additional inputs");
                 throw err;
@@ -126,18 +122,21 @@ class Runner {
 
 export async function run() {
     const token = core.getInput('token');
-    await new Runner(token).run();
+    const github = getOctokit(token);
+    await new Runner(github).run();
 }
 
-export const runPromise = run();
-
 async function runWrapper() {
-  try {
-    await runPromise;
-  } catch (error) {
-    core.setFailed(`create-deployment-from-label action failed: ${error}`);
-    console.log(error);
-  }
+    try {
+        if (process.env["ISTEST"]) {
+            console.log("testing")
+        } else {
+            await run();
+        }
+    } catch (error) {
+        core.setFailed(`create-deployment-from-label action failed: ${error}`);
+        console.log(error);
+    }
 }
 
 void runWrapper();

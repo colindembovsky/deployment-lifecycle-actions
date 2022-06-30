@@ -97,7 +97,7 @@ export class Runner {
             owner: this.context.repo.owner,
             repo: this.context.repo.repo,
             workflow_id: workflowName,
-            ref: `${this.context.payload.pull_request!.number}`,
+            ref: `${this.context.payload!.pull_request!.head!.ref}`,
             inputs: inputs
         });
 

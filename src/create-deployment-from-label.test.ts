@@ -109,7 +109,10 @@ test("does not create comment when create-comment is false", async(t) => {
     const gh = stubGH();
     const ctx = stubContext({ 
         pull_request: {
-            number: 123
+            number: 123,
+            head: {
+                ref: "/refs/heads/pull/123"
+            }
         }, 
         label: {
             name: "deploy to dev"
@@ -132,7 +135,10 @@ test("creates comment when create-comment is true", async(t) => {
     const ctx = stubContext({ 
         actor: "colindembovsky",
         pull_request: {
-            number: 123
+            number: 123,
+            head: {
+                ref: "/refs/heads/pull/123"
+            }
         }, 
         label: {
             name: "deploy to dev"
@@ -154,7 +160,10 @@ test("makes correct workflowDispatch call with no additional inputs", async(t) =
     const gh = stubGH();
     const ctx = stubContext({ 
         pull_request: {
-            number: 123
+            number: 123,
+            head: {
+                ref: "/refs/heads/pull/123"
+            }
         }, 
         label: {
             name: "deploy to dev"
@@ -171,7 +180,7 @@ test("makes correct workflowDispatch call with no additional inputs", async(t) =
     await new Runner(gh, ctx).run();
     t.true(createWorkflowDispatchSpy.calledOnce);
     t.is(createWorkflowDispatchSpy.getCall(0).args[0]?.workflow_id, "deploy.yml");
-    t.is(createWorkflowDispatchSpy.getCall(0).args[0]?.ref, "123");
+    t.is(createWorkflowDispatchSpy.getCall(0).args[0]?.ref, "/refs/heads/pull/123");
     t.deepEqual(createWorkflowDispatchSpy.getCall(0).args[0]?.inputs, {environment: "dev"});
 });
 
@@ -207,7 +216,10 @@ test("makes correct workflowDispatch call with additional inputs", async(t) => {
     const gh = stubGH();
     const ctx = stubContext({ 
         pull_request: {
-            number: 123
+            number: 123,
+            head: {
+                ref: "/refs/heads/pull/123"
+            }
         }, 
         label: {
             name: "deploy to dev"
@@ -225,6 +237,6 @@ test("makes correct workflowDispatch call with additional inputs", async(t) => {
     await new Runner(gh, ctx).run();
     t.true(createWorkflowDispatchSpy.calledOnce);
     t.is(createWorkflowDispatchSpy.getCall(0).args[0]?.workflow_id, "deploy.yml");
-    t.is(createWorkflowDispatchSpy.getCall(0).args[0]?.ref, "123");
+    t.is(createWorkflowDispatchSpy.getCall(0).args[0]?.ref, "/refs/heads/pull/123");
     t.deepEqual(createWorkflowDispatchSpy.getCall(0).args[0]?.inputs, {environment: "dev", foo: "bar"});
 });

@@ -1,11 +1,11 @@
 import * as core from "@actions/core";
 import { context, getOctokit } from "@actions/github";
 import { Context } from "@actions/github/lib/context";
-import { WebhookPayload } from "@actions/github/lib/interfaces";
 import { GitHub } from "@actions/github/lib/utils";
 
-interface IDeployment {
+export interface IDeployment {
     id: number;
+    environment: string
 }
 
 export class Runner {
@@ -27,72 +27,7 @@ export class Runner {
         }
     }
 
-    async updateDeployment(deploymentId: number, state: string, description: string, environmentUrl: string) {
-        const github = this.github,
-        context = this.context,
-        url = this.cleanEnvironmentUrl(environmentUrl)
-        ;
-
-        core.info(`Deployed Environment url: '${url}'`);
-
-        const deployment = await github.rest.repos.getDeployment({
-            ...context.repo,
-            deployment_id: deploymentId
-        }).then(resp => {
-            return resp.data;
-        });
-
-        const payload: WebhookPayload = {
-            ...context.repo,
-            deployment_id: deployment.id,
-            state: state,
-            mediaType: {
-                previews: ['ant-man', 'flash']
-            }
-        };
-
-        if (environmentUrl) {
-            payload.environment_url = url;
-        }
-
-        if (description) {
-            payload.description = description;
-        }
-
-        // Update the the deployment state
-        await github.rest.repos.createDeploymentStatus(payload as any);
-
-        if (state === 'success') {
-            // Get all deployments for the specified environment
-            const allDeployments = await this.getAllDeployments(deployment.environment) as IDeployment[];
-
-            // Inactivate any previous environments
-            const promises: any[] = [];
-
-            allDeployments.forEach(deployment => {
-                // If this a previous deployment, ensure it is inactive.
-                if (deployment.id !== deploymentId) {
-                    promises.push(this.inactivateDeployment(deployment.id));
-                }
-            });
-
-            return Promise.all(promises);
-        }
-        throw new Error("Call to createDeploymentStatus() failed");
-    }
-  
-    cleanEnvironmentUrl(envUrl: string) {
-        // Terraform has started putting out quoted strings now, so we have to clean them up
-        let result = envUrl.trim();
-
-        const regex = /^"(.*)"$/;
-        if (regex.test(result)) {
-            result = regex.exec(result)![1];
-        }
-        return result;
-    }
-  
-    async deactivateIntegrationDeployments(ref) {
+    async deactivateIntegrationDeployments(ref: string) {
         const context = this.context
         , github = this.github
         ;
@@ -116,29 +51,25 @@ export class Runner {
                             // The first state is the most current state for the deployment
                             const currentState = statuses.data[0].state;
             
-                            // Ignore deployments that are already inactive
-                            if (currentState !== 'inactive') {
-                                // Ignore environments that are already in failure state
-                                if (currentState !== 'failure') {
-                                    return this.transitionPrDeploymentToFailure(deployment)
-                                    .then(() => {
-                                        // Pause so that status updates can cascade through and trigger clean up workflows
-                                        return this.sleep(15);
-                                    })
-                                    .then(() => {
-                                        core.info(`Deployment: ${deployment.id}:${deployment.environment} transitioning to inactive`);
-                
-                                        return github.rest.repos.createDeploymentStatus({
-                                            ...context.repo,
-                                            mediaType: { previews: ["flash", "ant-man"] },
-                                            deployment_id: deployment.id,
-                                            state: 'inactive',
-                                            description: 'Pull Request Merged/Closed, inactivating'
-                                        });
+                            // Ignore deployments that are already inactive or in failure state
+                            if (currentState !== 'inactive' && currentState !== 'failure') {
+                                return this.transitionPrDeploymentToFailure(deployment)
+                                .then(() => {
+                                    // Pause so that status updates can cascade through and trigger clean up workflows
+                                    core.info("Sleeping to wait for transition...");
+                                    return this.sleep(15);
+                                })
+                                .then(() => {
+                                    core.info(`Deployment: ${deployment.id}:${deployment.environment} transitioning to inactive`);
+            
+                                    return github.rest.repos.createDeploymentStatus({
+                                        ...context.repo,
+                                        mediaType: { previews: ["flash", "ant-man"] },
+                                        deployment_id: deployment.id,
+                                        state: 'inactive',
+                                        description: 'Pull Request Merged/Closed, inactivating'
                                     });
-                                } else {
-                                    return {};
-                                }
+                                });
                             } else {
                                 return {};
                             }
@@ -153,7 +84,7 @@ export class Runner {
         });
     }
   
-    async transitionPrDeploymentToFailure(deployment) {
+    async transitionPrDeploymentToFailure(deployment: IDeployment) {
         const context = this.context
         , github = this.github
         ;
@@ -170,7 +101,8 @@ export class Runner {
     }
   
     async sleep(seconds: number) {
-        return new Promise(resolve => { setTimeout(resolve, seconds * 1000) });
+        const mult = process.env["ISTEST"] ? 1 : 1000;
+        return new Promise(resolve => { setTimeout(resolve, seconds * mult) });
     }
   
     async getAllDeployments(environment: string) {

@@ -4,6 +4,7 @@ import * as github from '@actions/github';
 import { GitHub } from '@actions/github/lib/utils';
 import { Context } from '@actions/github/lib/context';
 import * as core from '@actions/core';
+import { IDeployment } from "./deactivate-deployments";
 
 type TestContext = {
     stdoutWrite: any;
@@ -145,4 +146,37 @@ export function stubContext(payload: any = null, actor: string = "colin", eventN
     sinon.stub(ctx, "actor").value(actor);
     sinon.stub(ctx, "eventName").value(eventName);
     return ctx;
+}
+
+export function stubListDeployments(gh: InstanceType<typeof GitHub>, deployments: IDeployment[]) {
+    const spy = sinon.stub(gh.rest.repos, "listDeployments");
+    spy.resolves({
+        data: deployments
+    } as any);
+
+    return spy;
+}
+
+export function stubListDeploymentStatuses(gh: InstanceType<typeof GitHub>, states: string[]) {
+    const spy = sinon.stub(gh.rest.repos, "listDeploymentStatuses");
+
+    const data: any = [];
+    states.forEach(s => data.push({ state: s }));
+    spy.resolves({
+        data: data
+    } as any);
+
+    return spy;
+}
+
+export function stubCreateDeploymentStatus(gh: InstanceType<typeof GitHub>, fail: boolean = false) {
+    const spy = sinon.stub(gh.rest.repos, "createDeploymentStatus");
+    
+    if (fail) {
+        spy.throws(new Error("some error message"));
+    } else {
+        spy.resolves();
+    }
+
+    return spy;
 }

@@ -23,7 +23,9 @@ The deployment works as follows:
 
 1. A PR is created as usual.
 1. When ready to deploy, someone adds a `deploy to <environment>` label to the PR to deploy to the `<enviroment>` environment:
+
     ![Adding the label](images/apply-label.png)
+    
 1. The `Label Deployment` workflow triggers when the label is added.
     - This workflow uses `colindembovsky/deployment-lifecycle-actions/create-deployment-from-label`
         - The Action first extracts the environment name (`dev` from `deploy to dev` for example) based on a customizable regex pattern

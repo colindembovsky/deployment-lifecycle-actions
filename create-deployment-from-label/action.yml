@@ -10,20 +10,26 @@ inputs:
     description: Set to true to create a comment on the PR
     required: false
     default: "true"
-  comment-body:
-    description: Body of the comment
-    required: false
-    default: ""
-  workflow-name:
-    description: Name of the workflow to invoke to run the deployment logic
+  deployment-workflow-name:
+    description: Name of the workflow to invoke to run the deployment logic e.g. deployApp.yml
     required: true
+  additional-inputs-json:
+    description: >-
+      JSON string of additional inputs to pass to the workflow. 
+      These are merged with { environment: <env_name> } and passed to the deployment workflow.
+      This requires the deployment workflow to accept at least the "environment" input parameter e.g.
+      on:
+        workflow_dispatch:
+          inputs:
+            environment:
+              description: The name of the environment to be deployed
+              required: true
   token:
+    description: Token with permissions to perform REST API calls to the repository
     default: ${{ github.token }}
 outputs:
   environment:
     description: Name of the environment
-  deployment-id:
-    description: The ID of the deployment
 runs:
   using: "node16"
   main: "../lib/create-deployment-from-label.js"

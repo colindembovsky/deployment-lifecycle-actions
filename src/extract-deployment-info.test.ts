@@ -36,6 +36,6 @@ test("succeeds for non deployment_status event", async(t) => {
 
     new Runner(ctx).run();
     t.true(setOutputSpy.calledTwice);
-    t.deepEqual(setOutputSpy.getCall(0).args, [ 'deployment_github_ref', '123' ]);
+    t.deepEqual(setOutputSpy.getCall(0).args, [ 'deployment_ref', '123' ]);
     t.deepEqual(setOutputSpy.getCall(1).args, [ 'environment', 'dev' ]);
 });

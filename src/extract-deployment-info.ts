@@ -13,7 +13,7 @@ export class Runner {
         const deployment = this.context.payload.deployment;
 
         core.startGroup('Set outputs');
-        this.setOutput('deployment_github_ref', deployment.ref);
+        this.setOutput('deployment_ref', deployment.ref);
         this.setOutput('environment', deployment.environment);
         core.endGroup();
     }

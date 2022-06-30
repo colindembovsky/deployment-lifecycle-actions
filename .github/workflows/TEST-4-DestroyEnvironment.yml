@@ -15,7 +15,7 @@ jobs:
 
     - name: Extract Deployment Details and Report Deployment in Progress
       id: deployment_data
-      uses: ./../../extract-deployment-info
+      uses: ./extract-deployment-info
         
     - name: Destroy environment
       run: |

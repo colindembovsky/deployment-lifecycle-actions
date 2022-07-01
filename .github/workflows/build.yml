@@ -23,6 +23,8 @@ jobs:
     - name: Generate test summary markdown
       run: |
         echo "# Tests 🧪🧪🧪" > test.md
-        sed 's/^  /\n/' test.md >> test.md
+        sed 's/^  /\n/' test.txt >> test.md
+        sed -i -e 's/^=============================== C/# Coverage ☂️☂️☂️\n\n```\n=============================== C/' test.md
+        echo '```' >> test.md
         cat test.md >> $GITHUB_STEP_SUMMARY
         

@@ -14,8 +14,9 @@
   },
   "scripts": {
     "build": "tsc --build",
-    "test": "yarn run build && ava src/**.test.ts --serial --verbose",
-    "cover": "yarn run build && c8 ava src/**.test.ts --serial --verbose"
+    "test": "yarn run build && ava src/**.test.ts --serial",
+    "cover": "yarn run build && c8 ava src/**.test.ts --serial",
+    "cover-report": "yarn run build && c8 ava src/**.test.ts --serial > test.txt"
   },
   "ava": {
     "typescript": {
@@ -26,7 +27,8 @@
     },
     "environmentVariables": {
       "ISTEST": "true"
-    }
+    },
+    "verbose": true
   },
   "devDependencies": {
     "@ava/typescript": "^3.0.1",

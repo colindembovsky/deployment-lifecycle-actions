@@ -1,4 +1,4 @@
-![Build](https://github.com/colindembovsky/deployment-lifecycle-actions/actions/workflows/build.yml/badge.svg)
+![Build](https://github.com/colindembovsky/deployment-lifecycle-actions/actions/workflows/build.yml/badge.svg) [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/colindembovsky/deployment-lifecycle-actions/LICENSE)
 
 # Deployment Lifecylcle Actions
 

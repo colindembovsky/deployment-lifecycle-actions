@@ -91,7 +91,7 @@ jobs:
 
     - name: Create deployment from label
       id: create-deploy
-      uses: colindembovsky/deployment-lifecycle-actions/create-deployment-from-label
+      uses: colindembovsky/deployment-lifecycle-actions/create-deployment-from-label@v1
       with:
         # this is the name of the yml file in your .github/workflows/ folder that you want to trigger
         # to run the deployment steps. The workflow must expect at least 1 input called 'environment'
@@ -169,7 +169,7 @@ jobs:
       uses: actions/checkout@v3
 
     - name: Mark environments as inactive in GitHub
-      uses: colindembovsky/deployment-lifecycle-actions/deactivate-deployment
+      uses: colindembovsky/deployment-lifecycle-actions/deactivate-deployment@v1
       with:
         token: ${{ secrets.DEPLOY_TOKEN }}
 ```
@@ -199,7 +199,7 @@ jobs:
     # extract the 'ref' and 'environment' as outputs
     - name: Extract Deployment Details and Report Deployment in Progress
       id: deployment_data
-      uses: colindembovsky/deployment-lifecycle-actions/extract-deployment-info
+      uses: colindembovsky/deployment-lifecycle-actions/extract-deployment-info@v1
     
     # implement tear-down steps here, accessing the outputs from the previous step
     - name: Destroy environment

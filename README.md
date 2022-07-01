@@ -1,6 +1,10 @@
+![Build](https://github.com/colindembovsky/deployment-lifecycle-actions/actions/workflows/build.yml/badge.svg)
+
 # Deployment Lifecylcle Actions
 
 Managing deployments via PR is good practice and is a central tenet to GitHub flow. However, practically managing deployments is non-trivial. The Actions in this repo coupled with four workflow templates will give you a complete deployment management solution.
+
+A huge thank you to my colleage [Peter Murray](https://github.com/peter-murray) for the guts of the code in the Actions!
 
 ## Overview
 

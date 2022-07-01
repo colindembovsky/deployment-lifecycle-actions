@@ -22,7 +22,7 @@ The deployment works as follows:
 ![Deployment Phase](images/creation-workflows.png)
 
 1. A PR is created as usual.
-1. When ready to deploy, someone adds a `deploy to <environment>` label to the PR to deploy to the `<enviroment>` environment:
+1. When ready to deploy, someone adds a `deploy to <environment>` label to the PR to deploy to the `<environment>` environment:
 
     ![Adding the label](images/apply-label.png)
     

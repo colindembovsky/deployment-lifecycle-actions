@@ -64,7 +64,7 @@ When the PR is closed, the deactivate phase is as follows:
 
 ### 1. Label Deployment Workflow
 
-Use this to trigger the process. You need to know the name of the workflow you want to trigger and any additional inputs.
+Use this to trigger the process. You need to know the name of the workflow you want to trigger to do the actual deployments and any additional inputs.
 
 ```yml
 name: Label deployment trigger
@@ -111,7 +111,7 @@ jobs:
 
 ### 2. Deployment Workflow
 
-You use this to run your deployment steps.
+You use this to run your deployment steps. No custom actions are needed! The only requirement is that you have an `environment` input and any optional additional inputs, which you need to specify in the previous workflow.
 
 ```yml
 name: Deploy Environment
@@ -149,7 +149,7 @@ jobs:
 
 ### 3. Deactivate Deployment Workflow
 
-No customization needed here - this simply marks the deployment in the PR as inactive, which triggers the `Destroy environment` workflow.
+No customization needed here, so just copy it as-is. This simply marks the deployment in the PR as inactive, which triggers the `Destroy environment` workflow.
 
 ```yml
 name: Deactivate Deployment
@@ -176,7 +176,7 @@ jobs:
 
 ### 4. Destroy Environment Workflow
 
-Use the `extract-deployment-info` action to extract the `ref` and `environment`. Then perform any applicable cleanup steps.
+This workflow uses the `extract-deployment-info` action to extract the `ref` and `environment` that has been deactivated. Then perform any applicable cleanup steps.
 
 ```yml
 name: Destroy Environment

@@ -24,17 +24,5 @@ jobs:
       run: |
         echo "# Tests 🧪🧪🧪" > test.md
         sed 's/^  /\n/' test.md >> test.md
-
-    - name: Generate markdown for the test coverage
-      uses: irongut/CodeCoverageSummary@v1.0.2
-      with:
-        filename: coverage/cobertura-coverage.xml
-        badge: true
-        format: 'markdown'
-        output: 'file'
-    
-    - name: Add step summary for coverage
-      run: |
-        echo code-coverage-results.md >> $GITHUB_STEP_SUMMARY
-
+        cat test.md >> $GITHUB_STEP_SUMMARY
         

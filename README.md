@@ -1,10 +1,10 @@
 ![Build](https://github.com/colindembovsky/deployment-lifecycle-actions/actions/workflows/build.yml/badge.svg) [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/colindembovsky/deployment-lifecycle-actions/LICENSE)
 
-# Deployment Lifecylcle Actions
+# Deployment Lifecycle Actions
 
 Managing deployments via PR is good practice and is a central tenet to GitHub flow. However, practically managing deployments is non-trivial. The Actions in this repo coupled with four workflow templates will give you a complete deployment management solution.
 
-A huge thank you to my colleage [Peter Murray](https://github.com/peter-murray) for the guts of the code in the Actions!
+A huge thank you to my colleague [Peter Murray](https://github.com/peter-murray) for the guts of the code in the Actions!
 
 ## Overview
 
@@ -14,10 +14,10 @@ The Actions in this repo wrap the heavy-lifting for you. There are four workflow
 
 Workflow|Trigger|Action Used|Parameters
 --|--|--|--
-`Label Deployment`|When a label is added to the PR|[colindembovsky/deployment-lifecycle-actions/create-deployment-from-label](colindembovsky/deployment-lifecycle-actions/create-deployment-from-label/action.yml)|<ul><li>The name of the deployment workflow</li><li>Deployment token</li></ul>
+`Label Deployment`|When a label is added to the PR|[colindembovsky/deployment-lifecycle-actions/create-deployment-from-label](create-deployment-from-label/action.yml)|<ul><li>The name of the deployment workflow</li><li>Deployment token</li></ul>
 `Deployment`|Triggered by the `Label Deployment` workflow|_None_|_None_
 `Deactivate Deployment`|When the PR is closed|[colindembovsky/deployment-lifecycle-actions/deactivate-deployment](deactivate-deployment/action.yml)|_None_
-`Destroy Environment`|When a deployment is set to `failure`|[colindembovsky/deployment-lifecycle-actions/extract-deployment-info](colindembovsky/deployment-lifecycle-actions/extract-deployment-info/action.yml)|_None_
+`Destroy Environment`|When a deployment is set to `failure`|[colindembovsky/deployment-lifecycle-actions/extract-deployment-info](extract-deployment-info/action.yml)|_None_
 
 ### Deployment Phase
 

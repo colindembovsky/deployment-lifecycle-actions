@@ -20,7 +20,6 @@ jobs:
       with:
         deployment-workflow-name: TEST-2-DeployEnvironment.yml
         additional-inputs-json: '{ "url": "https://another-test-url" }'
-        token: ${{ secrets.DEPLOY_TOKEN }}
     
     - name: Dump env name
       run: echo $ENV

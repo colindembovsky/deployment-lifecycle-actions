@@ -14,7 +14,7 @@ The Actions in this repo wrap the heavy-lifting for you. There are four workflow
 
 Workflow|Trigger|Action Used|Parameters
 --|--|--|--
-`Label Deployment`|When a label is added to the PR|[colindembovsky/deployment-lifecycle-actions/create-deployment-from-label](create-deployment-from-label/action.yml)|<ul><li>The name of the deployment workflow</li><li>Deployment token</li></ul>
+`Label Deployment`|When a label is added to the PR|[colindembovsky/deployment-lifecycle-actions/create-deployment-from-label](create-deployment-from-label/action.yml)|<ul><li>The name of the deployment workflow</li><li>Deployment token (optional)</li></ul>
 `Deployment`|Triggered by the `Label Deployment` workflow|_None_|_None_
 `Deactivate Deployment`|When the PR is closed|[colindembovsky/deployment-lifecycle-actions/deactivate-deployment](deactivate-deployment/action.yml)|_None_
 `Destroy Environment`|When a deployment is set to `failure`|[colindembovsky/deployment-lifecycle-actions/extract-deployment-info](extract-deployment-info/action.yml)|_None_
@@ -98,9 +98,8 @@ jobs:
         deployment-workflow-name: TEST-2-DeployEnvironment.yml
         # optional: use a json format to pass additional inputs
         additional-inputs-json: '{ "url": "https://another-test-url" }'
-        # provide a token with "workflow" permissions
-        # GITHUB_TOKEN will not work since it cannot invoke workflows (prevent infinite loops)
-        token: ${{ secrets.DEPLOY_TOKEN }}
+        # GITHUB_TOKEN will work - but you can provide another token if needed
+        # token: ${{ secrets.DEPLOY_TOKEN }}
     
     # access the outputs of the create-deployment-from-label step
     - name: Dump env name
@@ -170,8 +169,6 @@ jobs:
 
     - name: Mark environments as inactive in GitHub
       uses: colindembovsky/deployment-lifecycle-actions/deactivate-deployment@v1
-      with:
-        token: ${{ secrets.DEPLOY_TOKEN }}
 ```
 
 ### 4. Destroy Environment Workflow

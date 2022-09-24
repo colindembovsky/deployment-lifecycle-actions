@@ -16,5 +16,3 @@ jobs:
 
     - name: Mark environments as inactive in GitHub
       uses: ./deactivate-deployment
-      with:
-        token: ${{ secrets.DEPLOY_TOKEN }}

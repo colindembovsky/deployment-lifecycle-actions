@@ -1,0 +1,18 @@
+name: 'publish-action'
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  package-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        ref: ${{ github.event.payload.release.tag_name}}
+    
+    - name: Publish create-deployment-from-label action 
+      uses: actions-on-packages/package-action@0.4.2
+      with:
+        path: create-deployment-from-label
